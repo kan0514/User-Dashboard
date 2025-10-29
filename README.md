@@ -3,22 +3,20 @@ cd User-Dashboard
 💻 Backend SetupThe backend handles the API and database logic.1. Environment ConfigurationCreate a file named .env in the ./backend directory and populate it with your specific credentials:Bash# .env (in backend folder)
 DATABASE_URL="postgresql://[USER]:[PASSWORD]@localhost:5432/finance_db"
 JWT_SECRET="YOUR_STRONG_RANDOM_SECRET_KEY"
-REDIS_URL="redis://<your-upstack-url>:<port>" 
+REDIS_URL="redis://<your-upstack-url>:<port>"
 2. Install and InitializeBash# Navigate to backend
 cd backend
 npm install
 3. Database Migration and SeedingYou must reset the database and run seed scripts in order to populate the initial Categories and Transactions.Bash# ⚠️ WARNING: This will drop and recreate all data!
-npx prisma migrate reset 
-
-# Run seed scripts in order: Categories -> [User Creation] -> Transactions
-npx ts-node prisma/seedCategories.ts
+npx prisma migrate reset
+Run seed scripts in order: Categories -> [User Creation] -> TransactionsBashnpx ts-node prisma/seedCategories.ts
 # Run your user creation script here if separate, otherwise it's handled on initial login/register.
 npx ts-node prisma/seedTransactions.ts
 4. Run the API ServerBashnpm run dev
 The API will be running on http://localhost:4000.🖥️ Frontend Setup (UI)The frontend is a Next.js application located in the ./ui directory.1. Environment ConfigurationCreate a file named .env.local in the ./ui directory:Bash# .env.local (in ui folder)
 NEXT_PUBLIC_API_URL=http://localhost:4000/api/v1
 2. Install DependenciesBash# Navigate to frontend
-cd ../ui 
+cd ../ui
 npm install
 3. Run the Client ApplicationBashnpm run dev
 The application will be accessible at http://localhost:3000.🔗 Key API EndpointsEndpointMethodAuthenticationPurpose/api/v1/auth/registerPOSTNoneCreate a new user account./api/v1/auth/loginPOSTNoneAuthenticate user and issue JWT./api/v1/dashboardGETBearer TokenRetrieve cached and aggregated financial data for the dashboard.🎨 Frontend Architecture HighlightsGlobal State: The main user and dashboard data is managed in ui/app/layout.tsx and passed down, centralizing state management.Data Flow: The dashboard uses axios to fetch data, passing the JWT in the Authorization: Bearer <token> header.Visualization Logic: The SpendChart.tsx component handles the complex task of sorting transactions by date and calculating the running balance for accurate chart representation.
