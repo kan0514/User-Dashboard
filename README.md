@@ -1,14 +1,24 @@
-📊 Personal Finance Dashboard: Full Stack ProjectThis is a complete full-stack application for tracking personal finance, featuring secure user authentication, category-based transaction management, and a dashboard for data visualization.🚀 OverviewThis project is split into two main parts: a secure Backend built with Node.js/Express and Prisma, and a dynamic Frontend built with Next.js and Tailwind CSS.Key FeaturesSecure Authentication: User registration and login using JWTs.Transaction Management: Data seeded manually for various categories (Groceries, Rent, Salary, etc.).Data Visualization: Dashboard displays a Bar Chart showing the running balance over the last 10 transactions.Real-time Data: Integrated with a dashboard API for authenticated data fetching.💻 Tech StackComponentTechnologyDescriptionFrontend (UI)Next.js, TypeScript, Tailwind CSSApplication framework, type safety, and fast styling.ChartingRechartsUsed for the dynamic transaction bar chart.BackendNode.js, ExpressAPI server and business logic.DatabasePostgreSQLPrimary persistent data storage.ORMPrismaDatabase toolkit for efficient schema management and querying.CacheRedis (Upstack Cache)External free cache service for performance optimization (e.g., caching dashboard data).AuthenticationJWT (JSON Web Tokens)Secure API access control.⚙️ Backend Setup and API EndpointsPrerequisitesNode.jsPostgreSQL running locally (or via Docker)Access to a Redis instance (e.g., Upstack Online Cache connection string).SetupConfigure Environment: Create a .env file in the backend root directory with the following variables:DATABASE_URL="postgresql://user:password@localhost:5432/finance_db"
-JWT_SECRET="YOUR_STRONG_SECRET"
+📈 Full-Stack Personal Finance DashboardThis is a complete, full-stack web application designed for secure and efficient personal finance tracking and visualization.✨ Project OverviewThe dashboard provides users with secure access to their financial data, offering clear insights into spending habits, transaction history, and overall balance trends.ComponentStackKey FunctionalityFrontend (UI)Next.js, TypeScript, Tailwind CSSData visualization, user interface, and authentication flow management.BackendNode.js (Express), Prisma, PostgreSQLSecure REST API, data persistence, and business logic.CachingRedis (Upstack Cache)Optimizes dashboard performance by caching frequently accessed data.🎯 FeaturesSecure Authentication: Robust user registration and login endpoints utilizing JSON Web Tokens (JWT) for secure, stateless authorization.Performance: Uses an external Redis cache instance to accelerate dashboard data retrieval.Data Visualization: A dynamic Bar Chart on the dashboard displays the running balance calculated over the last 10 transactions.Data Integrity: Transaction and Category data are seeded via specific Prisma scripts for a structured start.⚙️ Setup and InstallationPrerequisitesEnsure you have the following installed:Node.js (LTS version)PostgreSQL Database InstanceGitAccess to a Redis instance (e.g., Upstack Online Cache).Global SetupClone the Repository:Bashgit clone https://github.com/kan0514/User-Dashboard.git
+cd User-Dashboard
+💻 Backend SetupThe backend handles the API and database logic.1. Environment ConfigurationCreate a file named .env in the ./backend directory and populate it with your specific credentials:Bash# .env (in backend folder)
+DATABASE_URL="postgresql://[USER]:[PASSWORD]@localhost:5432/finance_db"
+JWT_SECRET="YOUR_STRONG_RANDOM_SECRET_KEY"
 REDIS_URL="redis://<your-upstack-url>:<port>" 
-Install Dependencies:Bashnpm install
-Database Migration & Seeding:Reset (Required): To start fresh and ensure category correctness:Bashnpx prisma migrate reset
-Seed Data: Run the seed scripts in the correct order:Bashnpx ts-node prisma/seedCategories.ts
-# Ensure a user is created here if needed
-npx ts-node prisma/seedTransactions.ts
-Run the Backend:Bashnpm run dev
-Key API EndpointsEndpointMethodAuthenticationDescription/auth/registerPOSTNoneCreates a new user account./auth/loginPOSTNoneAuthenticates user and returns a JWT./dashboardGETBearer TokenFetches summarized data, recent transactions (last 10), and spend statistics.🖥️ Frontend Setup and StructureThe frontend code resides in the ui directory.SetupNavigate to the Frontend:Bashcd ui
+2. Install and InitializeBash# Navigate to backend
+cd backend
 npm install
-Configure API URL: Create a .env.local file in the ui directory:NEXT_PUBLIC_API_URL=http://localhost:4000/api/v1
-Run the Frontend:Bashnpm run dev
-Frontend StructurePathPurposeui/app/layout.tsxMain application layout, global state (user, dashboard), and authentication checks.ui/app/dashboard/page.tsxMain visualization area, fetching data via axios.ui/app/login/page.tsxInitial login page/modal.ui/components/Sidebar.tsxNavigation and user info (authenticated view).ui/components/SpendChart.tsxBar chart component visualizing the running balance.Dashboard Chart LogicThe SpendChart.tsx component calculates the running balance across the last 10 chronologically sorted transactions, displaying the cumulative financial trend using a Bar Chart.Data Key: The chart uses a calculated balance key, not the raw amount.Sorting: Transactions are explicitly sorted by createdAt date (oldest first) in the component's useMemo hook to ensure correct cumulative calculation.
+3. Database Migration and SeedingYou must reset the database and run seed scripts in order to populate the initial Categories and Transactions.Bash# ⚠️ WARNING: This will drop and recreate all data!
+npx prisma migrate reset 
+
+# Run seed scripts in order: Categories -> [User Creation] -> Transactions
+npx ts-node prisma/seedCategories.ts
+# Run your user creation script here if separate, otherwise it's handled on initial login/register.
+npx ts-node prisma/seedTransactions.ts
+4. Run the API ServerBashnpm run dev
+The API will be running on http://localhost:4000.🖥️ Frontend Setup (UI)The frontend is a Next.js application located in the ./ui directory.1. Environment ConfigurationCreate a file named .env.local in the ./ui directory:Bash# .env.local (in ui folder)
+NEXT_PUBLIC_API_URL=http://localhost:4000/api/v1
+2. Install DependenciesBash# Navigate to frontend
+cd ../ui 
+npm install
+3. Run the Client ApplicationBashnpm run dev
+The application will be accessible at http://localhost:3000.🔗 Key API EndpointsEndpointMethodAuthenticationPurpose/api/v1/auth/registerPOSTNoneCreate a new user account./api/v1/auth/loginPOSTNoneAuthenticate user and issue JWT./api/v1/dashboardGETBearer TokenRetrieve cached and aggregated financial data for the dashboard.🎨 Frontend Architecture HighlightsGlobal State: The main user and dashboard data is managed in ui/app/layout.tsx and passed down, centralizing state management.Data Flow: The dashboard uses axios to fetch data, passing the JWT in the Authorization: Bearer <token> header.Visualization Logic: The SpendChart.tsx component handles the complex task of sorting transactions by date and calculating the running balance for accurate chart representation.
